@@ -1,0 +1,16 @@
+META-INF/CompilerHints
+com/vyazelenko/d4ll/BadExample.class
+com/vyazelenko/d4ll/jmh_generated/ListExample_jmhType_B1.class
+com/vyazelenko/d4ll/jmh_generated/BadExample_jmhType_B2.class
+com/vyazelenko/d4ll/jmh_generated/ListExample_jmhType_B3.class
+com/vyazelenko/d4ll/jmh_generated/BadExample_wrapper_jmhTest.class
+com/vyazelenko/d4ll/jmh_generated/ListExample_jmhType.class
+com/vyazelenko/d4ll/jmh_generated/ListExample_array_jmhTest.class
+com/vyazelenko/d4ll/jmh_generated/ListExample_jmhType_B2.class
+com/vyazelenko/d4ll/jmh_generated/BadExample_jmhType_B1.class
+com/vyazelenko/d4ll/jmh_generated/BadExample_primitive_jmhTest.class
+com/vyazelenko/d4ll/jmh_generated/ListExample_list_jmhTest.class
+META-INF/BenchmarkList
+com/vyazelenko/d4ll/ListExample.class
+com/vyazelenko/d4ll/jmh_generated/BadExample_jmhType_B3.class
+com/vyazelenko/d4ll/jmh_generated/BadExample_jmhType.class

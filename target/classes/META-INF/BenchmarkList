@@ -1,0 +1,4 @@
+JMH S 30 com.vyazelenko.d4ll.BadExample S 62 com.vyazelenko.d4ll.jmh_generated.BadExample_primitive_jmhTest S 9 primitive S 11 AverageTime E A 1 1 1 E I 2 10 T 3 1 s E I 2 10 T 3 1 s E I 1 3 E E E E E E U 11 NANOSECONDS E E 
+JMH S 30 com.vyazelenko.d4ll.BadExample S 60 com.vyazelenko.d4ll.jmh_generated.BadExample_wrapper_jmhTest S 7 wrapper S 11 AverageTime E A 1 1 1 E I 2 10 T 3 1 s E I 2 10 T 3 1 s E I 1 3 E E E E E E U 11 NANOSECONDS E E 
+JMH S 31 com.vyazelenko.d4ll.ListExample S 59 com.vyazelenko.d4ll.jmh_generated.ListExample_array_jmhTest S 5 array S 11 AverageTime E A 1 1 1 E I 2 10 T 3 1 s E I 2 10 T 3 1 s E I 1 3 E E E E E E U 11 NANOSECONDS E E 
+JMH S 31 com.vyazelenko.d4ll.ListExample S 58 com.vyazelenko.d4ll.jmh_generated.ListExample_list_jmhTest S 4 list S 11 AverageTime E A 1 1 1 E I 2 10 T 3 1 s E I 2 10 T 3 1 s E I 1 3 E E E E E E U 11 NANOSECONDS E E 
