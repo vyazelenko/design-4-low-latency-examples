@@ -15,14 +15,14 @@ import java.util.concurrent.TimeUnit;
 @Warmup(iterations = 10, time = 1)
 @Measurement(iterations = 10, time = 1)
 @OutputTimeUnit(TimeUnit.NANOSECONDS)
-@BenchmarkMode(Mode.SampleTime)
+@BenchmarkMode(Mode.AverageTime)
 @State(Scope.Benchmark)
 public class ParseExample
 {
     private static final int SIZE = 1024 * 1024;
 
-    private final HashMap<Long, Long> hashMap = new HashMap<>(SIZE * 2);
-    private final Long2LongCounterMap counterMap = new Long2LongCounterMap(SIZE * 2, Hashing.DEFAULT_LOAD_FACTOR, 0);
+    private final HashMap<Long, Long> hashMap = new HashMap<>(SIZE);
+    private final Long2LongCounterMap counterMap = new Long2LongCounterMap(SIZE, Hashing.DEFAULT_LOAD_FACTOR, -1);
     private final ByteBuffer byteBuffer = ByteBuffer.allocateDirect(SIZE * 40);
     private final UnsafeBuffer agrona = new UnsafeBuffer();
     private final int[] lengths = new int[SIZE];
