@@ -20,11 +20,12 @@ import java.util.concurrent.TimeUnit;
 public class ParseExample
 {
     private static final int SIZE = 1024 * 1024;
+    private static final int NUM_UNIQUE_KEYS = 5_000;
 
-    private final HashMap<Long, Long> hashMap = new HashMap<>(SIZE);
-    private final Long2LongCounterMap counterMap = new Long2LongCounterMap(SIZE, Hashing.DEFAULT_LOAD_FACTOR, -1);
-    private final ByteBuffer byteBuffer = ByteBuffer.allocateDirect(SIZE * 40);
-    private final UnsafeBuffer agrona = new UnsafeBuffer();
+    private final ByteBuffer byteBuffer = ByteBuffer.allocateDirect(SIZE * 50);
+    private final HashMap<Long, Long> hashMap = new HashMap<>(NUM_UNIQUE_KEYS);
+    private final UnsafeBuffer unsafeBuffer = new UnsafeBuffer();
+    private final Long2LongCounterMap counterMap = new Long2LongCounterMap(NUM_UNIQUE_KEYS, Hashing.DEFAULT_LOAD_FACTOR, 0);
     private final int[] lengths = new int[SIZE];
     private final int[] offsets = new int[SIZE];
     private int next;
@@ -32,18 +33,18 @@ public class ParseExample
     @Setup
     public void setup()
     {
-        agrona.wrap(byteBuffer);
+        unsafeBuffer.wrap(byteBuffer);
         final Random r = new Random(-4623848);
+        final long[] keys = r.longs(NUM_UNIQUE_KEYS).toArray();
         int offset = 0;
         for (int i = 0; i < SIZE; i++)
         {
-            final long value = r.nextLong(1_000_000, 1_000_000_000_000L);
             offsets[i] = offset;
-            int written = agrona.putStringWithoutLengthAscii(offset, "{id:");
-            written += agrona.putLongAscii(offset + written, value);
-            written += agrona.putStringWithoutLengthAscii(offset + written, ",value:");
-            written += agrona.putNaturalIntAscii(offset + written, r.nextInt(10, 100));
-            written += agrona.putStringWithoutLengthAscii(offset + written, "}");
+            int written = unsafeBuffer.putStringWithoutLengthAscii(offset, "{key:");
+            written += unsafeBuffer.putLongAscii(offset + written, keys[i % keys.length]);
+            written += unsafeBuffer.putStringWithoutLengthAscii(offset + written, ",value:");
+            written += unsafeBuffer.putNaturalIntAscii(offset + written, r.nextInt(100_000, 1_000_000));
+            written += unsafeBuffer.putStringWithoutLengthAscii(offset + written, "}");
             lengths[i] = written;
             offset += written;
         }
@@ -61,11 +62,11 @@ public class ParseExample
 
         final String json = new String(bytes, StandardCharsets.US_ASCII);
 
-        final long id = Long.parseLong(json, 4, length - 10, 10);
-        final int value = Integer.parseInt(json, length - 3, length - 1, 10);
+        final long key = Long.parseLong(json, 5, length - 14, 10);
+        final int value = Integer.parseInt(json, length - 7, length - 1, 10);
 
-        final Long oldValue = hashMap.get(id);
-        hashMap.put(id, null != oldValue ? oldValue + value : (long)value);
+        final Long oldValue = hashMap.get(key);
+        hashMap.put(key, null != oldValue ? oldValue + value : (long)value);
         return null != oldValue ? oldValue : 0;
     }
 
@@ -76,11 +77,11 @@ public class ParseExample
         final int offset = offsets[index];
         final int length = lengths[index];
 
-        agrona.wrap(byteBuffer, offset, length);
+        unsafeBuffer.wrap(byteBuffer, offset, length);
 
-        final long id = agrona.parseNaturalLongAscii(4, length - 14);
-        final int value = agrona.parseNaturalIntAscii(length - 3, 2);
+        final long key = unsafeBuffer.parseLongAscii(5, length - 19);
+        final int value = unsafeBuffer.parseNaturalIntAscii(length - 7, 6);
 
-        return counterMap.getAndAdd(id, value);
+        return counterMap.getAndAdd(key, value);
     }
 }
