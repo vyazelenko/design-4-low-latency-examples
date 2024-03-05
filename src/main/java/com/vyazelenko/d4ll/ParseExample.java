@@ -20,12 +20,12 @@ import java.util.concurrent.TimeUnit;
 public class ParseExample
 {
     private static final int SIZE = 1024 * 1024;
-    private static final int NUM_UNIQUE_KEYS = 5_000;
+    private static final int NUM_UNIQUE_KEYS = 50_000;
 
     private final ByteBuffer byteBuffer = ByteBuffer.allocateDirect(SIZE * 50);
-    private final HashMap<Long, Long> hashMap = new HashMap<>(NUM_UNIQUE_KEYS);
+    private final HashMap<Long, Long> hashMap = new HashMap<>(NUM_UNIQUE_KEYS * 2);
     private final UnsafeBuffer unsafeBuffer = new UnsafeBuffer();
-    private final Long2LongCounterMap counterMap = new Long2LongCounterMap(NUM_UNIQUE_KEYS, Hashing.DEFAULT_LOAD_FACTOR, 0);
+    private final Long2LongCounterMap counterMap = new Long2LongCounterMap(NUM_UNIQUE_KEYS * 2, Hashing.DEFAULT_LOAD_FACTOR, 0);
     private final int[] lengths = new int[SIZE];
     private final int[] offsets = new int[SIZE];
     private int next;
@@ -41,12 +41,15 @@ public class ParseExample
         {
             offsets[i] = offset;
             int written = unsafeBuffer.putStringWithoutLengthAscii(offset, "{key:");
-            written += unsafeBuffer.putLongAscii(offset + written, keys[i % keys.length]);
+            final long key = keys[i % keys.length];
+            written += unsafeBuffer.putLongAscii(offset + written, key);
             written += unsafeBuffer.putStringWithoutLengthAscii(offset + written, ",value:");
             written += unsafeBuffer.putNaturalIntAscii(offset + written, r.nextInt(100_000, 1_000_000));
             written += unsafeBuffer.putStringWithoutLengthAscii(offset + written, "}");
             lengths[i] = written;
             offset += written;
+            hashMap.put(key, key);
+            counterMap.put(key, key);
         }
     }
 
