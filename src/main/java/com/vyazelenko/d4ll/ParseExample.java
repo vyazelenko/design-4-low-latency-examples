@@ -3,7 +3,16 @@ package com.vyazelenko.d4ll;
 import org.agrona.collections.Hashing;
 import org.agrona.collections.Long2LongCounterMap;
 import org.agrona.concurrent.UnsafeBuffer;
-import org.openjdk.jmh.annotations.*;
+import org.openjdk.jmh.annotations.Benchmark;
+import org.openjdk.jmh.annotations.BenchmarkMode;
+import org.openjdk.jmh.annotations.Fork;
+import org.openjdk.jmh.annotations.Measurement;
+import org.openjdk.jmh.annotations.Mode;
+import org.openjdk.jmh.annotations.OutputTimeUnit;
+import org.openjdk.jmh.annotations.Scope;
+import org.openjdk.jmh.annotations.Setup;
+import org.openjdk.jmh.annotations.State;
+import org.openjdk.jmh.annotations.Warmup;
 
 import java.nio.ByteBuffer;
 import java.nio.charset.StandardCharsets;
@@ -66,7 +75,7 @@ public class ParseExample
         final String json = new String(bytes, StandardCharsets.US_ASCII);
 
         final long key = Long.parseLong(json.substring(5, length - 14));
-        final int value = Integer.parseInt(json.substring( length - 7, length - 1));
+        final int value = Integer.parseInt(json.substring(length - 7, length - 1));
 
         return hashMap.merge(key, (long)value, Long::sum);
     }
