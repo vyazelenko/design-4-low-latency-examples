@@ -54,7 +54,25 @@ public class ParseExample
     }
 
     @Benchmark
-    public long jdk()
+    public long jdk8()
+    {
+        final int index = (next++ & (SIZE - 1));
+        final int offset = offsets[index];
+        final int length = lengths[index];
+
+        final byte[] bytes = new byte[length];
+        byteBuffer.position(offset).limit(offset + length).get(bytes);
+
+        final String json = new String(bytes, StandardCharsets.US_ASCII);
+
+        final long key = Long.parseLong(json.substring(5, length - 14));
+        final int value = Integer.parseInt(json.substring( length - 7, length - 1));
+
+        return hashMap.merge(key, (long)value, Long::sum);
+    }
+
+    @Benchmark
+    public long jdk21()
     {
         final int index = (next++ & (SIZE - 1));
         final int offset = offsets[index];
@@ -68,9 +86,7 @@ public class ParseExample
         final long key = Long.parseLong(json, 5, length - 14, 10);
         final int value = Integer.parseInt(json, length - 7, length - 1, 10);
 
-        final Long oldValue = hashMap.get(key);
-        hashMap.put(key, null != oldValue ? oldValue + value : (long)value);
-        return null != oldValue ? oldValue : 0;
+        return hashMap.merge(key, (long)value, Long::sum);
     }
 
     @Benchmark
